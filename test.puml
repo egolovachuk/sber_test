@@ -1,0 +1,25 @@
+@startuml Payments
+
+hide footbox
+
+participant Бухгалтер as Foo
+participant Фронтенд as Foo1
+participant Бэкенд as Foo2
+participant Сбер_API as Foo3
+
+Foo -> Foo1 : Ввод данных поручения
+Foo1 -> Foo2 : Передача полей поручения
+Foo2 -> Foo3 : Запрос /v1/payments
+group
+loop каждые 3 минуты
+  Foo2 -> Foo3 : Запрос /v1/payments/{externalId}/state
+end
+Foo3 --> Foo2 : Статус обработки платежных документов
+Foo2 -> Foo1 : Команда отрисовать статус поручения
+Foo1 -> Foo : Статус поручения
+Foo -> Foo1 : Нажатие кнопки "Показать детали поручения"
+Foo1 -> Foo2 : Команда выполнить запрос
+Foo2 -> Foo3 : Запрос /v1/payments/{externalId}
+Foo3 --> Foo2 : Поля и значения поручения согласно /v1/payments
+
+@enduml
